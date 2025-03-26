@@ -4,27 +4,27 @@ import mysql.connector as mysc
 from tkinter import messagebox
 
 # Connexion à la base de données
-
 def connect_to_db():
     return mysc.connect(host="localhost", user="root", password="", database="hopital")
 
 # Compter les patients pour générer le matricule
-
 def count_patient():
     try:
         conn = connect_to_db()
         cur = conn.cursor()
-        cur.execute("SELECT COUNT(*) FROM patients")
-        count = cur.fetchone()[0] + 1
-        return f"24SJI{count}"
+        cur.execute("SELECT MAX(CAST(SUBSTRING(matricule, 6) AS UNSIGNED)) FROM patients")
+        dernier_num = cur.fetchone()[0]
+        if dernier_num is None:
+            return "24SJI1"
+        return f"24SJI{dernier_num + 1}"
     except:
         return "24SJI1"
     finally:
         cur.close()
         conn.close()
 
-# Fonctions CRUD
 
+# Fonctions CRUD
 def ajouter():
     if not modifier_mode[0]:
         matricule = matricule_var.get()
@@ -65,14 +65,11 @@ def ajouter():
             vider_champs()
             actualiser_liste_patients()
             modifier_mode[0] = False
-            for entry in [nom_entry, prenom_entry, age_entry, adresse_entry, telephone_entry, remarque_entry]:
-                entry.config(state=DISABLED)
         except mysc.Error as e:
             messagebox.showerror("Erreur", str(e))
         finally:
             cur.close()
             conn.close()
-
 
 def modifier():
     if not matricule_var.get():
@@ -81,8 +78,7 @@ def modifier():
     modifier_mode[0] = True
     for entry in [nom_entry, prenom_entry, age_entry, adresse_entry, telephone_entry, remarque_entry]:
         entry.config(state=NORMAL)
-    messagebox.showinfo("Modification", "Vous pouvez maintenant modifier les champs. Cliquez sur 'Enregistrer' pour valider.")
-
+    messagebox.showinfo("Modification", "Une fois la modification terminée, Cliquez sur 'Enregistrer' pour valider.")
 
 def supprimer():
     if messagebox.askquestion("Confirmation", "Voulez-vous supprimer ce patient ?") == 'yes':
@@ -102,30 +98,41 @@ def supprimer():
             conn.close()
 
 # Vider les champs et générer un nouveau matricule
-
 def vider_champs():
     matricule_var.set(count_patient())
     for entry in [nom_entry, prenom_entry, age_entry, adresse_entry, telephone_entry, remarque_entry]:
         entry.config(state=NORMAL)
         entry.delete(0, END)
-        entry.config(state=DISABLED)
 
-# Remplir les champs au clic
+# Suivi du dernier patient sélectionné
+dernier_patient_selectionne = [""]
 
 def reagir_clic(event):
+    global dernier_patient_selectionne
     selected = tableau.focus()
     if not selected:
         return
-    valeurs = tableau.item(selected, 'values')
-    matricule_var.set(valeurs[0])
-    entries_data = [valeurs[1], valeurs[2], valeurs[3], valeurs[4], valeurs[5], valeurs[6]]
-    for entry, value in zip([nom_entry, prenom_entry, age_entry, adresse_entry, telephone_entry, remarque_entry], entries_data):
-        entry.config(state=NORMAL)
-        entry.delete(0, END)
-        entry.insert(0, value)
-        entry.config(state=DISABLED)
 
-# Actualiser tableau
+    valeurs = tableau.item(selected, 'values')
+    matricule_actuel = valeurs[0]
+
+    if matricule_actuel == dernier_patient_selectionne[0]:
+        vider_champs()
+        for entry in [nom_entry, prenom_entry, age_entry, adresse_entry, telephone_entry, remarque_entry]:
+            entry.config(state=NORMAL)
+        tableau.selection_remove(tableau.focus())
+        modifier_mode[0] = False
+        dernier_patient_selectionne[0] = ""
+    else:
+        matricule_var.set(matricule_actuel)
+        entries_data = [valeurs[1], valeurs[2], valeurs[3], valeurs[4], valeurs[5], valeurs[6]]
+        for entry, value in zip([nom_entry, prenom_entry, age_entry, adresse_entry, telephone_entry, remarque_entry], entries_data):
+            entry.config(state=NORMAL)
+            entry.delete(0, END)
+            entry.insert(0, value)
+            entry.config(state=DISABLED)
+        modifier_mode[0] = False
+        dernier_patient_selectionne[0] = matricule_actuel
 
 def actualiser_liste_patients():
     for i in tableau.get_children():
@@ -136,8 +143,8 @@ def actualiser_liste_patients():
         cur.execute("SELECT * FROM patients")
         for row in cur.fetchall():
             tableau.insert("", END, values=row)
-    except:
-        pass
+    except Exception as e:
+        print("Erreur lors du chargement :", e)
     finally:
         cur.close()
         conn.close()
@@ -164,7 +171,7 @@ labels = ["Nom", "Prénom", "Âge", "Adresse", "Téléphone", "Remarque"]
 entries = []
 for i, lab in enumerate(labels):
     Label(form_frame, text=f"{lab}:", bg='#f7d3e9').grid(row=i+1, column=0, sticky="w")
-    e = Entry(form_frame, state=DISABLED)
+    e = Entry(form_frame)
     e.grid(row=i+1, column=1, pady=5)
     entries.append(e)
 
