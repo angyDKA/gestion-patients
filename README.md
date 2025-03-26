@@ -19,3 +19,5 @@ Elle a pour objectif de faciliter la gestion des dossiers patients pour un étab
 ## Auteur
 
 Projet réalisé en classe préparatoire : Prepa Saint Jean
+
+![Aperçu de l'application](Illustration.png)
