@@ -22,7 +22,7 @@ Elle a pour objectif de faciliter la gestion des dossiers patients pour un étab
 
 Projet réalisé en classe préparatoire : Prepa Saint Jean
 
-##Comment Lancer le projet?
+## Comment Lancer le projet?
 1. Cloner le dépôt
 2. Vérifier que MySQL est actif avec une base de données nommée `hopital`
 3. Lancer le fichier `Gestion des patients de Saint Jean Hôpital.py`
