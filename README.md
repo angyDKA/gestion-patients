@@ -1,5 +1,7 @@
 # Application de gestion des patients
 
+![Aperçu de l'application](Illustration.png)
+
 Cette application a été développée durant mes classes préparatoires, dans le cadre d’un projet complet allant de la conception à la réalisation.  
 Elle a pour objectif de faciliter la gestion des dossiers patients pour un établissement hospitalier.
 
@@ -19,5 +21,3 @@ Elle a pour objectif de faciliter la gestion des dossiers patients pour un étab
 ## Auteur
 
 Projet réalisé en classe préparatoire : Prepa Saint Jean
-
-![Aperçu de l'application](Illustration.png)
