@@ -2,7 +2,7 @@
 
 ![Aperçu de l'application](Illustration.png)
 
-Cette application a été développée durant mes classes préparatoires, dans le cadre d’un projet complet allant de la conception à la réalisation.  
+Cette application a été développée durant mes classes préparatoires, dans le cadre d’un projet encadré à partir d’un cahier des charges précis.
 Elle a pour objectif de faciliter la gestion des dossiers patients pour un établissement hospitalier.
 
 ## 🛠Fonctionnalités
