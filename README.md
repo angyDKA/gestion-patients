@@ -11,7 +11,7 @@ Elle a pour objectif de faciliter la gestion des dossiers patients pour un étab
 - Génération automatique du matricule (format : 24SJI1)
 - Affichage dynamique avec `Treeview`
 - Interface graphique conviviale 
-- 
+
 ## Technologies utilisées
 
 - Python
